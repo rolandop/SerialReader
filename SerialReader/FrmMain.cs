@@ -7,6 +7,7 @@ using System.Drawing;
 using System.IO.Ports;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -47,10 +48,16 @@ namespace SerialReader
 
         private void Form1_Load(object sender, EventArgs e)
         {
+            if (DateTime.Now > new DateTime(2019, 7, 8))
+            {
+                MessageBox.Show("Licencia de prueba caducada, por favor contactarse con angel.rolandop@gmail.com para obtener una.");
+            }
+
             var puertos = SerialPort.GetPortNames();
 
             Configuracion.PortName = puertos.FirstOrDefault();
-
+            dgData.AutoGenerateColumns = false;
+            lblCurrentGuia.Text = "";
         }
 
         private void BtnAbrir_Click(object sender, EventArgs e)
@@ -181,10 +188,12 @@ namespace SerialReader
 
         }
 
-        private bool estable = false;
+        private bool nuevoPeso = false;
+        private bool actualizaPeso = false;
         private string ultimoPeso = "";
-        private int tiempoEstabilidad = 500;
-        private DateTime ultimaLectura;
+        private int tiempoEstabilidad = 2000;
+        private DateTime fechaCambioPeso;
+        private DateTime fechaUltimaLectura;
 
         private bool pararLectura = false;
         private void IniciarLectura() {
@@ -192,6 +201,7 @@ namespace SerialReader
             EscucharComandos();
 
             pararLectura = false;
+            fechaCambioPeso = DateTime.Now;
 
             var thread = new Thread(()=> {
                 while (true)
@@ -219,43 +229,100 @@ namespace SerialReader
                     }
 
                     var peso = serialPort1.ReadExisting();
+                    var pesoNumerico =
+                                    Convert.ToInt64(Regex.Match(peso, @"-?\d+").Value);
+
+                    var utimoPesoNumerico = ultimoPeso != ""
+                                    ? Convert.ToInt64(Regex.Match(ultimoPeso, @"-?\d+").Value)
+                                    : 0;
+
                     if (peso != ultimoPeso)
                     {
                         ultimoPeso = peso;
-                        ultimaLectura = DateTime.Now;
-                        estable = false;
+                        fechaCambioPeso = DateTime.Now;
+                        
+                        if (pesoNumerico <= Configuracion.EmptyWeigth)
+                        {
+                            nuevoPeso = true;
+                        }
+
+                        this.Invoke(new Action(() =>
+                        {   
+                            if (nuevoPeso)
+                            {
+                                
+                            }
+                            lblPeso.ForeColor = SystemColors.HotTrack;
+                            lblPeso.Text = ultimoPeso;
+                        }));
                     }
                     else
                     {
-                        if (!estable)
+                        if (nuevoPeso)
                         {
-                            var tiempoTranscurrido =
-                                (DateTime.Now - ultimaLectura).TotalMilliseconds;
+                            var ahora = DateTime.Now;
+                            var tiempoTranscurrido = (ahora - fechaCambioPeso)
+                                                        .TotalMilliseconds; //Tiempo desde que cambió el último valor
 
-                            if (tiempoTranscurrido >= tiempoEstabilidad)
+                            if (tiempoTranscurrido >= Configuracion.StabilityTime
+                                && pesoNumerico > 0)
                             {
-                                estable = true;
+                                fechaUltimaLectura = DateTime.Now;
 
                                 this.Invoke(new Action(() =>
                                 {
-                                    lblPeso.Text = ultimoPeso;
-
                                     if (Work != null)
                                     {
                                         using (var context = new SerialReaderContext())
                                         {
-                                            var data = new BalanceData
+                                            Data = new BalanceData
                                             {
                                                 WorkId = Work.Id,
                                                 OriginalData = ultimoPeso,
+                                                Weight = utimoPesoNumerico,
                                                 CreatedDate = DateTime.Now
                                             };
-                                            context.BalanceDatas.Add(data);
+
+                                            context.BalanceDatas.Add(Data);
                                             context.SaveChanges();
+
+                                            DataCollection.Add(Data);
+                                            RefrescarDatos();
+                                            nuevoPeso = false;
                                         }
+                                        lblPeso.ForeColor = Color.Green;
                                     }
 
                                 }));
+                            }
+                        }
+                        else if (Data != null)
+                        {
+                            var tiempoAcomodar = (DateTime.Now - fechaCambioPeso)
+                                                        .TotalMilliseconds; //Tiempo en acomodar peso, luego de haber estabilizado el peso
+
+                            var diferenciaPeso = Math.Abs(Data.Weight - pesoNumerico); //Diferencia de peso mínima para contabilizar
+
+                            if (diferenciaPeso >= Configuracion.AccommodateWeigthMin
+                                    && tiempoAcomodar > Configuracion.AccommodateTime)
+                            {
+                                using (var context = new SerialReaderContext())
+                                {
+                                    Data.OriginalData = ultimoPeso;
+                                    Data.Weight = utimoPesoNumerico;
+                                    Data.UpdateDate = DateTime.Now;
+
+                                    context.Entry(Data).State = System.Data.Entity.EntityState.Modified;
+                                    context.SaveChanges();
+
+                                    this.Invoke(new Action(() =>
+                                    {
+                                        lblPeso.ForeColor = Color.Green;
+                                    }));
+
+                                    fechaUltimaLectura = DateTime.Now;
+                                    RefrescarDatos();
+                                }
                             }
                         }
                     }
@@ -266,11 +333,26 @@ namespace SerialReader
         }
 
         public BalanceWork Work { get; set; }
+        public BalanceData Data { get; set; }
+        public List<BalanceData> DataCollection { get; set; } = new List<BalanceData>();
 
         private void EscucharComandos()
         {
 
             pararLectura = false;
+
+            //Busca el último trabajo anterior y los retoma
+            using (var context = new SerialReaderContext())
+            {   
+                Work = context.BalanceWorks
+                                    .FirstOrDefault(w => w.Status == BalanceStatus.Reading
+                                            && w.StartDate < DateTime.Now);
+                if (Work != null)
+                {
+                    DataCollection = Work.Datas.ToList();
+                    RefrescarDatos();
+                }
+            }
 
             var thread = new Thread(() => {
 
@@ -297,9 +379,16 @@ namespace SerialReader
                             if (work.Status == BalanceStatus.Finished)
                             {
                                 Work = null;
+                                this.Invoke(new Action(() => {
+                                    toolStripStatusLabel1.Text = "Terminado";
+                                }));
                             }
                             else
                             {
+                                this.Invoke(new Action(() => {
+                                    lblCurrentGuia.Text = Work.Code;
+                                    toolStripStatusLabel1.Text = "Pesando...";
+                                }));
                                 continue;
                             }
                         }
@@ -311,6 +400,8 @@ namespace SerialReader
                         {
                             Work.Status = BalanceStatus.Reading;
                             context.SaveChanges();
+                            DataCollection.Clear();
+                            RefrescarDatos();
                         }
                     }
                 }
@@ -338,6 +429,39 @@ namespace SerialReader
         {
             var frmConfiguracion = new FrmConfiguracion();
             frmConfiguracion.ShowDialog();
+        }
+
+        public void RefrescarDatos()
+        {
+            if (this.InvokeRequired)
+            {
+                this.Invoke(new Action(()=> {
+                    RefrescarDatos();
+                }));
+            }
+            else
+            {
+                var data = DataCollection.OrderByDescending(d => d.CreatedDate)
+                                                .ToList();
+                dgData.DataSource = data;
+                lblTotalPeso.Text = data.Sum(d=> d.Weight).ToString();
+                dgData.Update();
+                dgData.Refresh();
+                Application.DoEvents();
+            }
+
+            
+
+            //using (var context = new SerialReaderContext())
+            //{
+            //    var data = context.BalanceDatas
+            //                    .Where(d => d.WorkId == workId)
+            //                    .OrderByDescending(d => d.CreatedDate)
+            //                    .ToList();
+
+
+            //}
+
         }
     }
 }

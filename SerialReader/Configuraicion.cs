@@ -15,5 +15,9 @@ namespace SerialReader
         public static Parity Parity { get; set; } = Parity.None;
         public static StopBits StopBits { get; set; } = StopBits.One;
         public static Handshake Handshake { get; set; } = Handshake.None;
+        public static long EmptyWeigth { get; set; } = 5;
+        public static long StabilityTime { get;  set; } = 1000;
+        public static long AccommodateTime { get; set; } = 2000;
+        public static long AccommodateWeigthMin { get; set; } = 5;
     }
 }

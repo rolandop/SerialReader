@@ -70,6 +70,19 @@
     <Compile Include="FrmMain.Designer.cs">
       <DependentUpon>FrmMain.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201907042340433_initialMigration.cs" />
+    <Compile Include="Migrations\201907042340433_initialMigration.Designer.cs">
+      <DependentUpon>201907042340433_initialMigration.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201907050024438_WeightMigration.cs" />
+    <Compile Include="Migrations\201907050024438_WeightMigration.Designer.cs">
+      <DependentUpon>201907050024438_WeightMigration.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201907050239292_UpdateDateMigration.cs" />
+    <Compile Include="Migrations\201907050239292_UpdateDateMigration.Designer.cs">
+      <DependentUpon>201907050239292_UpdateDateMigration.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="FrmConfiguracion.resx">
@@ -77,6 +90,15 @@
     </EmbeddedResource>
     <EmbeddedResource Include="FrmMain.resx">
       <DependentUpon>FrmMain.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201907042340433_initialMigration.resx">
+      <DependentUpon>201907042340433_initialMigration.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201907050024438_WeightMigration.resx">
+      <DependentUpon>201907050024438_WeightMigration.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201907050239292_UpdateDateMigration.resx">
+      <DependentUpon>201907050239292_UpdateDateMigration.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

@@ -6,7 +6,7 @@ namespace SerialReader.DAL.Entities
     {
         public SerialReaderContext() : base("DefaultConnection")
         {
-
+            Database.SetInitializer<SerialReaderContext>(null);
         }
 
         public DbSet<BalanceWork> BalanceWorks { get; set; }

@@ -12,8 +12,9 @@ namespace SerialReader.DAL.Entities
         [Key]
         public int Id { get; set; }
         public DateTime CreatedDate { get; set; }
+        public DateTime? UpdateDate { get; set; }
         public string OriginalData { get; set; }
-        //public float Weight { get; set; }
+        public float Weight { get; set; }
         //public string Unit { get; set; }
         public int WorkId { get; set; }
         public virtual BalanceWork Work { get; set; }
