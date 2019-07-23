@@ -50,15 +50,16 @@
             this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.parámetrosToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.dgData = new System.Windows.Forms.DataGridView();
+            this.CreatedDate = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.OriginalData = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Weight = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.label1 = new System.Windows.Forms.Label();
             this.lblCurrentGuia = new System.Windows.Forms.Label();
             this.btnConsultar = new System.Windows.Forms.Button();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.label3 = new System.Windows.Forms.Label();
             this.lblTotalPeso = new System.Windows.Forms.Label();
-            this.CreatedDate = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.OriginalData = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Weight = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.validarConeccionBaseDeDatosToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.gbLectura.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             this.menuStrip1.SuspendLayout();
@@ -226,7 +227,8 @@
             // toolStripMenuItem1
             // 
             this.toolStripMenuItem1.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.parámetrosToolStripMenuItem});
+            this.parámetrosToolStripMenuItem,
+            this.validarConeccionBaseDeDatosToolStripMenuItem});
             this.toolStripMenuItem1.Name = "toolStripMenuItem1";
             this.toolStripMenuItem1.Size = new System.Drawing.Size(85, 24);
             this.toolStripMenuItem1.Text = "Opciones";
@@ -234,8 +236,8 @@
             // parámetrosToolStripMenuItem
             // 
             this.parámetrosToolStripMenuItem.Name = "parámetrosToolStripMenuItem";
-            this.parámetrosToolStripMenuItem.Size = new System.Drawing.Size(135, 26);
-            this.parámetrosToolStripMenuItem.Text = "Puerto";
+            this.parámetrosToolStripMenuItem.Size = new System.Drawing.Size(303, 26);
+            this.parámetrosToolStripMenuItem.Text = "Configurar Puerto";
             this.parámetrosToolStripMenuItem.Click += new System.EventHandler(this.ParámetrosToolStripMenuItem_Click);
             // 
             // dgData
@@ -254,6 +256,36 @@
             this.dgData.RowTemplate.Height = 24;
             this.dgData.Size = new System.Drawing.Size(540, 259);
             this.dgData.TabIndex = 17;
+            // 
+            // CreatedDate
+            // 
+            this.CreatedDate.DataPropertyName = "CreatedDate";
+            this.CreatedDate.HeaderText = "Fecha lectura";
+            this.CreatedDate.MinimumWidth = 6;
+            this.CreatedDate.Name = "CreatedDate";
+            this.CreatedDate.ReadOnly = true;
+            this.CreatedDate.Width = 125;
+            // 
+            // OriginalData
+            // 
+            this.OriginalData.DataPropertyName = "OriginalData";
+            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
+            this.OriginalData.DefaultCellStyle = dataGridViewCellStyle1;
+            this.OriginalData.HeaderText = "Peso original";
+            this.OriginalData.MinimumWidth = 6;
+            this.OriginalData.Name = "OriginalData";
+            this.OriginalData.ReadOnly = true;
+            this.OriginalData.Width = 125;
+            // 
+            // Weight
+            // 
+            this.Weight.DataPropertyName = "Weight";
+            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
+            this.Weight.DefaultCellStyle = dataGridViewCellStyle2;
+            this.Weight.HeaderText = "Peso";
+            this.Weight.MinimumWidth = 6;
+            this.Weight.Name = "Weight";
+            this.Weight.Width = 125;
             // 
             // label1
             // 
@@ -302,35 +334,12 @@
             this.lblTotalPeso.Text = "0";
             this.lblTotalPeso.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
-            // CreatedDate
+            // validarConeccionBaseDeDatosToolStripMenuItem
             // 
-            this.CreatedDate.DataPropertyName = "CreatedDate";
-            this.CreatedDate.HeaderText = "Fecha lectura";
-            this.CreatedDate.MinimumWidth = 6;
-            this.CreatedDate.Name = "CreatedDate";
-            this.CreatedDate.ReadOnly = true;
-            this.CreatedDate.Width = 125;
-            // 
-            // OriginalData
-            // 
-            this.OriginalData.DataPropertyName = "OriginalData";
-            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
-            this.OriginalData.DefaultCellStyle = dataGridViewCellStyle1;
-            this.OriginalData.HeaderText = "Peso original";
-            this.OriginalData.MinimumWidth = 6;
-            this.OriginalData.Name = "OriginalData";
-            this.OriginalData.ReadOnly = true;
-            this.OriginalData.Width = 125;
-            // 
-            // Weight
-            // 
-            this.Weight.DataPropertyName = "Weight";
-            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
-            this.Weight.DefaultCellStyle = dataGridViewCellStyle2;
-            this.Weight.HeaderText = "Peso";
-            this.Weight.MinimumWidth = 6;
-            this.Weight.Name = "Weight";
-            this.Weight.Width = 125;
+            this.validarConeccionBaseDeDatosToolStripMenuItem.Name = "validarConeccionBaseDeDatosToolStripMenuItem";
+            this.validarConeccionBaseDeDatosToolStripMenuItem.Size = new System.Drawing.Size(303, 26);
+            this.validarConeccionBaseDeDatosToolStripMenuItem.Text = "Validar Conexión Base de Datos";
+            this.validarConeccionBaseDeDatosToolStripMenuItem.Click += new System.EventHandler(this.ValidarConeccionBaseDeDatosToolStripMenuItem_Click);
             // 
             // FrmMain
             // 
@@ -404,6 +413,7 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn CreatedDate;
         private System.Windows.Forms.DataGridViewTextBoxColumn OriginalData;
         private System.Windows.Forms.DataGridViewTextBoxColumn Weight;
+        private System.Windows.Forms.ToolStripMenuItem validarConeccionBaseDeDatosToolStripMenuItem;
     }
 }
 

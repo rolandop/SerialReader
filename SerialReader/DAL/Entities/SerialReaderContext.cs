@@ -13,7 +13,7 @@ namespace SerialReader.DAL.Entities
         {
             base.OnModelCreating(modelBuilder);
 
-            modelBuilder.HasDefaultSchema("");
+            modelBuilder.HasDefaultSchema("NOVA");
         }
 
         public DbSet<BalanceWork> BalanceWorks { get; set; }

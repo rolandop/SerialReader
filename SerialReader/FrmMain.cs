@@ -277,7 +277,7 @@ namespace SerialReader
                                         {
                                             Data = new BalanceData
                                             {
-                                                WorkId = Work.Id,
+                                                WorkId = Work.WorkId,
                                                 OriginalData = ultimoPeso,
                                                 Weight = utimoPesoNumerico,
                                                 CreatedDate = DateTime.Now
@@ -374,7 +374,7 @@ namespace SerialReader
                         if (Work != null && Work.Status == BalanceStatus.Reading)
                         {
                             var work = context.BalanceWorks
-                                                   .FirstOrDefault(w => w.Id == Work.Id);
+                                                   .FirstOrDefault(w => w.WorkId == Work.WorkId);
 
                             if (work.Status == BalanceStatus.Finished)
                             {
@@ -462,6 +462,65 @@ namespace SerialReader
 
             //}
 
+        }
+
+        private void ValidarConeccionBaseDeDatosToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                var now = DateTime.Now;
+                var workCode = "RP_" + now.Ticks;
+
+                using (var context = new SerialReaderContext())
+                {                    
+                    var work = new BalanceWork
+                    {
+                        Code = workCode,
+                        StartDate = now,
+                        EndDate = now,
+                        Status = BalanceStatus.Finished
+                    };
+
+                    work.Datas.Add(new BalanceData {
+                        CreatedDate = now,
+                        OriginalData = "100 Kg",
+                        Weight = 100
+                    });
+                    
+                    context.BalanceWorks.Add(work);
+                    context.SaveChanges();
+                }
+
+                using (var context = new SerialReaderContext())
+                { 
+                    var work = context.BalanceWorks.FirstOrDefault(w=> w.Code == workCode);
+                    if (work == null)
+                    {
+                        throw new Exception("No se pudo realizar las pruebas de integración. Work");
+                    }
+
+                    var data = context.BalanceDatas.FirstOrDefault(w => w.WorkId == work.WorkId);
+                    if (data == null)
+                    {
+                        throw new Exception("No se pudo realizar las pruebas de integración. Data");
+                    }                    
+                }
+                MessageBox.Show("Validación correcta", "Validando Conexión", 
+                                MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+            catch (Exception ex)
+            {                
+                var msg = "";
+
+                while (ex != null)
+                {
+                    msg = string.Concat(msg, " ", ex.Message);
+                    ex = ex.InnerException;
+                }
+
+                MessageBox.Show(msg, "Validando Conexión", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            
         }
     }
 }

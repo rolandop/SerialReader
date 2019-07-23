@@ -8,17 +8,31 @@ using System.Threading.Tasks;
 
 namespace SerialReader.DAL.Entities
 {
+    [Table("BALANCEDATAS")]
     public class BalanceData
     {
-        [DatabaseGenerated(DatabaseGeneratedOption.None)]
+        //[DatabaseGenerated(DatabaseGeneratedOption.None)]
         [Key]
-        public int Id { get; set; }
+        [Column("DATASID")]
+        public int DataId { get; set; }
+
+        [Column("CREATEDDATE")]
         public DateTime CreatedDate { get; set; }
+
+        [Column("UPDATEDATE")]
         public DateTime? UpdateDate { get; set; }
+
+        [Column("ORIGINALDATA")]
+        [MaxLength(50)]
         public string OriginalData { get; set; }
+
+        [Column("WEIGHT")]
         public float Weight { get; set; }
-        //public string Unit { get; set; }
+
+        [ForeignKey("Work")]
+        [Column("WORKID")]        
         public int WorkId { get; set; }
+        
         public virtual BalanceWork Work { get; set; }
     }
 }
