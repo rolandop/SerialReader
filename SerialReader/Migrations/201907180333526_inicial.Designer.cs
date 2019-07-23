@@ -7,13 +7,13 @@ namespace SerialReader.Migrations
     using System.Resources;
     
     [GeneratedCode("EntityFramework.Migrations", "6.1.3-40302")]
-    public sealed partial class UpdateDateMigration : IMigrationMetadata
+    public sealed partial class inicial : IMigrationMetadata
     {
-        private readonly ResourceManager Resources = new ResourceManager(typeof(UpdateDateMigration));
+        private readonly ResourceManager Resources = new ResourceManager(typeof(inicial));
         
         string IMigrationMetadata.Id
         {
-            get { return "201907050239292_UpdateDateMigration"; }
+            get { return "201907180333526_inicial"; }
         }
         
         string IMigrationMetadata.Source

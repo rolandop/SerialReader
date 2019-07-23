@@ -50,7 +50,7 @@ namespace SerialReader
         {
             if (DateTime.Now > new DateTime(2019, 7, 8))
             {
-                MessageBox.Show("Licencia de prueba caducada, por favor contactarse con angel.rolandop@gmail.com para obtener una.");
+                //MessageBox.Show("Licencia de prueba caducada, por favor contactarse con angel.rolandop@gmail.com para obtener una.");
             }
 
             var puertos = SerialPort.GetPortNames();

@@ -39,6 +39,12 @@
     <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
       <HintPath>..\packages\EntityFramework.6.1.3\lib\net45\EntityFramework.SqlServer.dll</HintPath>
     </Reference>
+    <Reference Include="Oracle.ManagedDataAccess, Version=4.122.1.0, Culture=neutral, PublicKeyToken=89b483f429c47342, processorArchitecture=MSIL">
+      <HintPath>..\packages\Oracle.ManagedDataAccess.12.2.1100\lib\net40\Oracle.ManagedDataAccess.dll</HintPath>
+    </Reference>
+    <Reference Include="Oracle.ManagedDataAccess.EntityFramework, Version=6.122.1.0, Culture=neutral, PublicKeyToken=89b483f429c47342, processorArchitecture=MSIL">
+      <HintPath>..\packages\Oracle.ManagedDataAccess.EntityFramework.12.2.20190115\lib\net45\Oracle.ManagedDataAccess.EntityFramework.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Core" />
@@ -70,17 +76,9 @@
     <Compile Include="FrmMain.Designer.cs">
       <DependentUpon>FrmMain.cs</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\201907042340433_initialMigration.cs" />
-    <Compile Include="Migrations\201907042340433_initialMigration.Designer.cs">
-      <DependentUpon>201907042340433_initialMigration.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201907050024438_WeightMigration.cs" />
-    <Compile Include="Migrations\201907050024438_WeightMigration.Designer.cs">
-      <DependentUpon>201907050024438_WeightMigration.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201907050239292_UpdateDateMigration.cs" />
-    <Compile Include="Migrations\201907050239292_UpdateDateMigration.Designer.cs">
-      <DependentUpon>201907050239292_UpdateDateMigration.cs</DependentUpon>
+    <Compile Include="Migrations\201907180333526_inicial.cs" />
+    <Compile Include="Migrations\201907180333526_inicial.Designer.cs">
+      <DependentUpon>201907180333526_inicial.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Program.cs" />
@@ -91,14 +89,8 @@
     <EmbeddedResource Include="FrmMain.resx">
       <DependentUpon>FrmMain.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201907042340433_initialMigration.resx">
-      <DependentUpon>201907042340433_initialMigration.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201907050024438_WeightMigration.resx">
-      <DependentUpon>201907050024438_WeightMigration.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201907050239292_UpdateDateMigration.resx">
-      <DependentUpon>201907050239292_UpdateDateMigration.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\201907180333526_inicial.resx">
+      <DependentUpon>201907180333526_inicial.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

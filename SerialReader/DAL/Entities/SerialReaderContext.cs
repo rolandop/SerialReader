@@ -9,6 +9,13 @@ namespace SerialReader.DAL.Entities
             Database.SetInitializer<SerialReaderContext>(null);
         }
 
+        protected override void OnModelCreating(DbModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
+
+            modelBuilder.HasDefaultSchema("");
+        }
+
         public DbSet<BalanceWork> BalanceWorks { get; set; }
         public DbSet<BalanceData> BalanceDatas { get; set; }
     }
