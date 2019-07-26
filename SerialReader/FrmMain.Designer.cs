@@ -38,17 +38,18 @@
             this.txtEnviar = new System.Windows.Forms.TextBox();
             this.txtRecibir = new System.Windows.Forms.TextBox();
             this.btnEnviar = new System.Windows.Forms.Button();
-            this.serialPort1 = new System.IO.Ports.SerialPort(this.components);
-            this.btnIniciarLectura = new System.Windows.Forms.Button();
             this.gbLectura = new System.Windows.Forms.GroupBox();
             this.lblPeso = new System.Windows.Forms.Label();
             this.cbEstable = new System.Windows.Forms.CheckBox();
-            this.btnPararLectura = new System.Windows.Forms.Button();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
+            this.conectarToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.conectarToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
+            this.desconectarToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.parámetrosToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.validarConeccionBaseDeDatosToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.dgData = new System.Windows.Forms.DataGridView();
             this.CreatedDate = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.OriginalData = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -59,7 +60,7 @@
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.label3 = new System.Windows.Forms.Label();
             this.lblTotalPeso = new System.Windows.Forms.Label();
-            this.validarConeccionBaseDeDatosToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.lblBalanza = new System.Windows.Forms.Label();
             this.gbLectura.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             this.menuStrip1.SuspendLayout();
@@ -68,6 +69,7 @@
             // 
             // btnAbrir
             // 
+            this.btnAbrir.Enabled = false;
             this.btnAbrir.Location = new System.Drawing.Point(20, 40);
             this.btnAbrir.Margin = new System.Windows.Forms.Padding(4);
             this.btnAbrir.Name = "btnAbrir";
@@ -79,6 +81,7 @@
             // 
             // btnCerrar
             // 
+            this.btnCerrar.Enabled = false;
             this.btnCerrar.Location = new System.Drawing.Point(171, 40);
             this.btnCerrar.Margin = new System.Windows.Forms.Padding(4);
             this.btnCerrar.Name = "btnCerrar";
@@ -136,23 +139,6 @@
             this.btnEnviar.UseVisualStyleBackColor = true;
             this.btnEnviar.Click += new System.EventHandler(this.BtnEnviar_Click);
             // 
-            // serialPort1
-            // 
-            this.serialPort1.ErrorReceived += new System.IO.Ports.SerialErrorReceivedEventHandler(this.SerialPort1_ErrorReceived);
-            this.serialPort1.PinChanged += new System.IO.Ports.SerialPinChangedEventHandler(this.SerialPort1_PinChanged);
-            this.serialPort1.DataReceived += new System.IO.Ports.SerialDataReceivedEventHandler(this.SerialPort1_DataReceived);
-            // 
-            // btnIniciarLectura
-            // 
-            this.btnIniciarLectura.Location = new System.Drawing.Point(600, 72);
-            this.btnIniciarLectura.Name = "btnIniciarLectura";
-            this.btnIniciarLectura.Size = new System.Drawing.Size(128, 27);
-            this.btnIniciarLectura.TabIndex = 11;
-            this.btnIniciarLectura.Text = "Iniciar Lectura";
-            this.btnIniciarLectura.UseVisualStyleBackColor = true;
-            this.btnIniciarLectura.Visible = false;
-            this.btnIniciarLectura.Click += new System.EventHandler(this.BtnIniciarLectura_Click);
-            // 
             // gbLectura
             // 
             this.gbLectura.Controls.Add(this.lblPeso);
@@ -184,18 +170,6 @@
             this.cbEstable.UseVisualStyleBackColor = true;
             this.cbEstable.Visible = false;
             // 
-            // btnPararLectura
-            // 
-            this.btnPararLectura.Enabled = false;
-            this.btnPararLectura.Location = new System.Drawing.Point(600, 105);
-            this.btnPararLectura.Name = "btnPararLectura";
-            this.btnPararLectura.Size = new System.Drawing.Size(128, 27);
-            this.btnPararLectura.TabIndex = 12;
-            this.btnPararLectura.Text = "Parar Lectura";
-            this.btnPararLectura.UseVisualStyleBackColor = true;
-            this.btnPararLectura.Visible = false;
-            this.btnPararLectura.Click += new System.EventHandler(this.BtnPararLectura_Click);
-            // 
             // statusStrip1
             // 
             this.statusStrip1.ImageScalingSize = new System.Drawing.Size(20, 20);
@@ -203,7 +177,7 @@
             this.toolStripStatusLabel1});
             this.statusStrip1.Location = new System.Drawing.Point(0, 617);
             this.statusStrip1.Name = "statusStrip1";
-            this.statusStrip1.Size = new System.Drawing.Size(582, 26);
+            this.statusStrip1.Size = new System.Drawing.Size(580, 26);
             this.statusStrip1.TabIndex = 15;
             this.statusStrip1.Text = "statusStrip1";
             // 
@@ -217,12 +191,36 @@
             // 
             this.menuStrip1.ImageScalingSize = new System.Drawing.Size(20, 20);
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.conectarToolStripMenuItem,
             this.toolStripMenuItem1});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Size = new System.Drawing.Size(582, 28);
+            this.menuStrip1.Size = new System.Drawing.Size(580, 28);
             this.menuStrip1.TabIndex = 16;
             this.menuStrip1.Text = "menuStrip1";
+            // 
+            // conectarToolStripMenuItem
+            // 
+            this.conectarToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.conectarToolStripMenuItem1,
+            this.desconectarToolStripMenuItem});
+            this.conectarToolStripMenuItem.Name = "conectarToolStripMenuItem";
+            this.conectarToolStripMenuItem.Size = new System.Drawing.Size(75, 24);
+            this.conectarToolStripMenuItem.Text = "Balanza";
+            // 
+            // conectarToolStripMenuItem1
+            // 
+            this.conectarToolStripMenuItem1.Name = "conectarToolStripMenuItem1";
+            this.conectarToolStripMenuItem1.Size = new System.Drawing.Size(174, 26);
+            this.conectarToolStripMenuItem1.Text = "Conectar";
+            this.conectarToolStripMenuItem1.Click += new System.EventHandler(this.ConectarToolStripMenuItem1_Click);
+            // 
+            // desconectarToolStripMenuItem
+            // 
+            this.desconectarToolStripMenuItem.Name = "desconectarToolStripMenuItem";
+            this.desconectarToolStripMenuItem.Size = new System.Drawing.Size(174, 26);
+            this.desconectarToolStripMenuItem.Text = "Desconectar";
+            this.desconectarToolStripMenuItem.Click += new System.EventHandler(this.DesconectarToolStripMenuItem_Click);
             // 
             // toolStripMenuItem1
             // 
@@ -239,6 +237,13 @@
             this.parámetrosToolStripMenuItem.Size = new System.Drawing.Size(303, 26);
             this.parámetrosToolStripMenuItem.Text = "Configurar Puerto";
             this.parámetrosToolStripMenuItem.Click += new System.EventHandler(this.ParámetrosToolStripMenuItem_Click);
+            // 
+            // validarConeccionBaseDeDatosToolStripMenuItem
+            // 
+            this.validarConeccionBaseDeDatosToolStripMenuItem.Name = "validarConeccionBaseDeDatosToolStripMenuItem";
+            this.validarConeccionBaseDeDatosToolStripMenuItem.Size = new System.Drawing.Size(303, 26);
+            this.validarConeccionBaseDeDatosToolStripMenuItem.Text = "Validar Conexión Base de Datos";
+            this.validarConeccionBaseDeDatosToolStripMenuItem.Click += new System.EventHandler(this.ValidarConeccionBaseDeDatosToolStripMenuItem_Click);
             // 
             // dgData
             // 
@@ -334,18 +339,21 @@
             this.lblTotalPeso.Text = "0";
             this.lblTotalPeso.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
-            // validarConeccionBaseDeDatosToolStripMenuItem
+            // lblBalanza
             // 
-            this.validarConeccionBaseDeDatosToolStripMenuItem.Name = "validarConeccionBaseDeDatosToolStripMenuItem";
-            this.validarConeccionBaseDeDatosToolStripMenuItem.Size = new System.Drawing.Size(303, 26);
-            this.validarConeccionBaseDeDatosToolStripMenuItem.Text = "Validar Conexión Base de Datos";
-            this.validarConeccionBaseDeDatosToolStripMenuItem.Click += new System.EventHandler(this.ValidarConeccionBaseDeDatosToolStripMenuItem_Click);
+            this.lblBalanza.AutoSize = true;
+            this.lblBalanza.Location = new System.Drawing.Point(511, 40);
+            this.lblBalanza.Name = "lblBalanza";
+            this.lblBalanza.Size = new System.Drawing.Size(46, 17);
+            this.lblBalanza.TabIndex = 23;
+            this.lblBalanza.Text = "label4";
             // 
             // FrmMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(582, 643);
+            this.ClientSize = new System.Drawing.Size(580, 643);
+            this.Controls.Add(this.lblBalanza);
             this.Controls.Add(this.lblTotalPeso);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.btnConsultar);
@@ -357,9 +365,7 @@
             this.Controls.Add(this.cbEstable);
             this.Controls.Add(this.gbLectura);
             this.Controls.Add(this.btnEnviar);
-            this.Controls.Add(this.btnPararLectura);
             this.Controls.Add(this.txtRecibir);
-            this.Controls.Add(this.btnIniciarLectura);
             this.Controls.Add(this.txtEnviar);
             this.Controls.Add(this.Enviar);
             this.Controls.Add(this.label2);
@@ -392,10 +398,7 @@
         private System.Windows.Forms.TextBox txtEnviar;
         private System.Windows.Forms.TextBox txtRecibir;
         private System.Windows.Forms.Button btnEnviar;
-        private System.IO.Ports.SerialPort serialPort1;
-        private System.Windows.Forms.Button btnIniciarLectura;
         private System.Windows.Forms.GroupBox gbLectura;
-        private System.Windows.Forms.Button btnPararLectura;
         private System.Windows.Forms.Label lblPeso;
         private System.Windows.Forms.CheckBox cbEstable;
         private System.Windows.Forms.StatusStrip statusStrip1;
@@ -414,6 +417,10 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn OriginalData;
         private System.Windows.Forms.DataGridViewTextBoxColumn Weight;
         private System.Windows.Forms.ToolStripMenuItem validarConeccionBaseDeDatosToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem conectarToolStripMenuItem;
+        private System.Windows.Forms.Label lblBalanza;
+        private System.Windows.Forms.ToolStripMenuItem conectarToolStripMenuItem1;
+        private System.Windows.Forms.ToolStripMenuItem desconectarToolStripMenuItem;
     }
 }
 

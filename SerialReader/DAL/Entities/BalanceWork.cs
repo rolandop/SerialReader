@@ -22,6 +22,11 @@ namespace SerialReader.DAL.Entities
         [Column("WORKSID")]
         public int WorkId { get; set; }
 
+        [Column("BALANCE")]
+        [MaxLength(50)]
+        public string Balance { get; set; }
+
+
         [Column("CODE")]
         [MaxLength(50)]
         public string Code { get; set; }

@@ -59,6 +59,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BalanceDevice.cs" />
+    <Compile Include="BalanceTest.cs" />
     <Compile Include="Configuraicion.cs" />
     <Compile Include="DAL\Entities\BalanceWork.cs" />
     <Compile Include="DAL\Entities\BalanceData.cs" />
@@ -76,6 +78,7 @@
     <Compile Include="FrmMain.Designer.cs">
       <DependentUpon>FrmMain.cs</DependentUpon>
     </Compile>
+    <Compile Include="IBalanceDevice.cs" />
     <Compile Include="Migrations\201907180333526_inicial.cs" />
     <Compile Include="Migrations\201907180333526_inicial.Designer.cs">
       <DependentUpon>201907180333526_inicial.cs</DependentUpon>

@@ -17,41 +17,37 @@ namespace SerialReader
     public partial class FrmMain : Form
     {
         private bool _enviando = false;
+        private string _balance;
+        private SerialReaderContext _context;
+        private IBalanceDevice _balanceDevice;
+
         public FrmMain()
         {
             InitializeComponent();
 
+            var mode = System.Configuration.ConfigurationSettings.AppSettings["mode"];
 
-
-            //SerialPort m_serialPort1 = new SerialPort("COM4"); //Puerto COM al que nos conectamos
-            //m_serialPort1.ReadTimeout = 2000; //El timeout es esencial para parar la conexion pasado un tiempo. En este caso 2 segundos.
-            //m_serialPort1.Open(); //Abrimos el puerto
-            //try
-            //{
-
-            //    var lectura = m_serialPort1.ReadLine(); //Leemos una linea del puerto
-            //}
-            //catch (InvalidOperationException ex)
-            //{
-            //    MessageBox.Show(ex.Message.ToString());
-            //}
-            //try
-            //{
-            //    m_serialPort1.Close();//Cerramos puerto
-            //    m_serialPort1.Dispose();//Liberamos recursos
-            //}
-            //catch
-            //{
-
-            //}  
+            if (mode == "test")
+            {
+                _balanceDevice = new BalanceTest();
+            }
+            else
+            {
+                _balanceDevice = new BalanceDevice();
+            }
         }
 
         private void Form1_Load(object sender, EventArgs e)
         {
+
             if (DateTime.Now > new DateTime(2019, 7, 8))
             {
                 //MessageBox.Show("Licencia de prueba caducada, por favor contactarse con angel.rolandop@gmail.com para obtener una.");
             }
+            _balance = System.Configuration.ConfigurationSettings.AppSettings["balance-code"];
+
+
+            lblBalanza.Text = _balance;
 
             var puertos = SerialPort.GetPortNames();
 
@@ -60,25 +56,42 @@ namespace SerialReader
             lblCurrentGuia.Text = "";
         }
 
-        private void BtnAbrir_Click(object sender, EventArgs e)
+        
+        private void ConectarToolStripMenuItem1_Click(object sender, EventArgs e)
         {
             try
-            {
-                serialPort1.PortName = Configuracion.PortName;
-                serialPort1.BaudRate = Configuracion.BaudRate;
-                serialPort1.DataBits = Configuracion.DataBits;
-                serialPort1.Parity = Configuracion.Parity;
-                serialPort1.StopBits = Configuracion.StopBits;
-                serialPort1.Handshake = Configuracion.Handshake;
-                
-                serialPort1.Open();
+            {   
+                _balanceDevice.Connect();
 
-                btnAbrir.Enabled = false;
-                btnCerrar.Enabled = true;
+                btnAbrir.Enabled = true;
+                btnCerrar.Enabled = false;
+
                 btnEnviar.Enabled = true;
                 gbLectura.Enabled = true;
 
-                BtnIniciarLectura_Click(null, null);
+
+
+                MessageBox.Show("Dispositivo conectado exitosamente!", "Serial Reader"
+                        , MessageBoxButtons.OK
+                        , MessageBoxIcon.Information);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message.ToString());
+            }
+
+        }
+
+        private void DesconectarToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                btnAbrir.Enabled = true;
+                btnCerrar.Enabled = false;
+                btnEnviar.Enabled = false;
+                gbLectura.Enabled = false;
+
+                _balanceDevice.Disconnect();
             }
             catch (Exception ex)
             {
@@ -86,40 +99,65 @@ namespace SerialReader
             }
         }
 
-        private void BtnCerrar_Click(object sender, EventArgs e)
+        private void BtnAbrir_Click(object sender, EventArgs e)
         {
             try
             {
-                BtnPararLectura_Click(null, null);
+                btnAbrir.Enabled = false;
+                btnCerrar.Enabled = true;
+                desconectarToolStripMenuItem.Enabled = false;
+                _context = new SerialReaderContext();
 
-                btnAbrir.Enabled = true;
-                btnCerrar.Enabled = false;
-                btnEnviar.Enabled = false;
-                gbLectura.Enabled = false;
 
-                if (serialPort1.IsOpen)
-                {
-                    serialPort1.Close();
-                }
+                IniciarLectura();
+
+                
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message.ToString());
+                
             }
+        }
+
+        private void BtnCerrar_Click(object sender, EventArgs e)
+        {
+            if (Work != null)
+            {
+                var work = _context
+                                    .BalanceWorks
+                                    .FirstOrDefault(w => 
+                                            w.Balance == _balance
+                                            && w.Code == Work.Code);
+
+                if (work != null)
+                {
+                    work.EndDate = DateTime.Now;
+                    work.Status = BalanceStatus.Finished;
+                }
+
+                _context.SaveChanges();
+            }
+
+            pararLectura = true;
+            btnAbrir.Enabled = true;
+            btnCerrar.Enabled = false;
+            desconectarToolStripMenuItem.Enabled = true;
+            toolStripStatusLabel1.Text = "Terminado";
+            lblCurrentGuia.Text = "";
+
+            Thread.Sleep(500);
+
+            _context.Dispose();
+
         }
 
         private void BtnEnviar_Click(object sender, EventArgs e)
         {
             try
             {
-                if (serialPort1.IsOpen)
-                {
-                    txtRecibir.Text = "";
-                    var enviar = txtEnviar.Text;
-                    byte[] buffer = Encoding.ASCII.GetBytes(enviar + "\r\n");
-                    serialPort1.Write(buffer, 0, buffer.Length);
-
-                }
+                txtRecibir.Text = "";
+                var enviar = txtEnviar.Text;
+                _balanceDevice.Send(enviar);
             }
             catch (Exception ex)
             {
@@ -131,10 +169,7 @@ namespace SerialReader
         {
             try
             {
-                if (serialPort1.IsOpen)
-                {
-                    txtRecibir.Text = serialPort1.ReadExisting();
-                }
+                txtRecibir.Text = _balanceDevice.Read();
             }
             catch (Exception ex)
             {
@@ -144,91 +179,38 @@ namespace SerialReader
 
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)
         {
-            if (serialPort1.IsOpen)
-            {
-                serialPort1.Close();
-            }
-        }
-
-        private void SerialPort1_DataReceived(object sender, SerialDataReceivedEventArgs e)
-        {
-            int intBuffer;
-            intBuffer = serialPort1.BytesToRead;
-            byte[] byteBuffer = new byte[intBuffer];
-            //serialPort1.Read(byteBuffer, 0, intBuffer);
-
-            this.Invoke(new Action(() =>
-            {
-                txtRecibir.Text += Encoding.UTF8.GetString(byteBuffer);
-                //lblPeso.Text = Encoding.UTF8.GetString(byteBuffer);
-            }));
+            _balanceDevice.Disconnect();
 
         }
 
-        private void SerialPort1_PinChanged(object sender, SerialPinChangedEventArgs e)
-        {
-            switch (e.EventType)
-            {
-                case SerialPinChange.CtsChanged:
-                    break;
-                case SerialPinChange.DsrChanged:
-                    break;
-                case SerialPinChange.CDChanged:
-                    break;
-                case SerialPinChange.Ring:
-                    break;
-                case SerialPinChange.Break:
-                    break;
-            }
-
-        }
-
-        private void SerialPort1_ErrorReceived(object sender, SerialErrorReceivedEventArgs e)
-        {
-
-        }
 
         private bool nuevoPeso = false;
-        private bool actualizaPeso = false;
         private string ultimoPeso = "";
-        private int tiempoEstabilidad = 2000;
         private DateTime fechaCambioPeso;
         private DateTime fechaUltimaLectura;
 
         private bool pararLectura = false;
         private void IniciarLectura() {
 
-            EscucharComandos();
-
             pararLectura = false;
+            nuevoPeso = true;
+
+            EscucharComandos();
+            
             fechaCambioPeso = DateTime.Now;
 
             var thread = new Thread(()=> {
+
                 while (true)
                 {   
                     if (pararLectura)
                     {
                         pararLectura = false;
-                        this.Invoke(new Action(() =>
-                        {
-                            btnIniciarLectura.Enabled = true;
-                            btnPararLectura.Enabled = false;
-                        }));
                         break;
                     }
                     
                     var tipoImpresion = "IP";
-
-                    byte[] buffer = Encoding.ASCII.GetBytes($"{tipoImpresion}\r\n");
-                    serialPort1.Write(buffer, 0, buffer.Length);
-                    Thread.Sleep(50);
-
-                    if (!serialPort1.IsOpen)
-                    {
-                        break;
-                    }
-
-                    var peso = serialPort1.ReadExisting();
+                    var peso = _balanceDevice.SendAndRead(tipoImpresion);
                     var pesoNumerico =
                                     Convert.ToInt64(Regex.Match(peso, @"-?\d+").Value);
 
@@ -271,25 +253,23 @@ namespace SerialReader
 
                                 this.Invoke(new Action(() =>
                                 {
-                                    if (Work != null)
+                                    if (Work != null && Work.Status == BalanceStatus.Reading)
                                     {
-                                        using (var context = new SerialReaderContext())
+                                        Data = new BalanceData
                                         {
-                                            Data = new BalanceData
-                                            {
-                                                WorkId = Work.WorkId,
-                                                OriginalData = ultimoPeso,
-                                                Weight = utimoPesoNumerico,
-                                                CreatedDate = DateTime.Now
-                                            };
+                                            WorkId = Work.WorkId,
+                                            OriginalData = ultimoPeso,
+                                            Weight = utimoPesoNumerico,
+                                            CreatedDate = DateTime.Now
+                                        };
 
-                                            context.BalanceDatas.Add(Data);
-                                            context.SaveChanges();
+                                        _context.BalanceDatas.Add(Data);
+                                        _context.SaveChanges();
 
-                                            DataCollection.Add(Data);
-                                            RefrescarDatos();
-                                            nuevoPeso = false;
-                                        }
+                                        DataCollection.Add(Data);
+                                        RefrescarDatos();
+                                        nuevoPeso = false;
+
                                         lblPeso.ForeColor = Color.Green;
                                     }
 
@@ -306,23 +286,21 @@ namespace SerialReader
                             if (diferenciaPeso >= Configuracion.AccommodateWeigthMin
                                     && tiempoAcomodar > Configuracion.AccommodateTime)
                             {
-                                using (var context = new SerialReaderContext())
+                                Data.OriginalData = ultimoPeso;
+                                Data.Weight = utimoPesoNumerico;
+                                Data.UpdateDate = DateTime.Now;
+
+                                _context.Entry(Data).State = 
+                                                System.Data.Entity.EntityState.Modified;
+                                _context.SaveChanges();
+
+                                this.Invoke(new Action(() =>
                                 {
-                                    Data.OriginalData = ultimoPeso;
-                                    Data.Weight = utimoPesoNumerico;
-                                    Data.UpdateDate = DateTime.Now;
+                                    lblPeso.ForeColor = Color.Green;
+                                }));
 
-                                    context.Entry(Data).State = System.Data.Entity.EntityState.Modified;
-                                    context.SaveChanges();
-
-                                    this.Invoke(new Action(() =>
-                                    {
-                                        lblPeso.ForeColor = Color.Green;
-                                    }));
-
-                                    fechaUltimaLectura = DateTime.Now;
-                                    RefrescarDatos();
-                                }
+                                fechaUltimaLectura = DateTime.Now;
+                                RefrescarDatos();
                             }
                         }
                     }
@@ -338,21 +316,22 @@ namespace SerialReader
 
         private void EscucharComandos()
         {
-
-            pararLectura = false;
-
             //Busca el último trabajo anterior y los retoma
-            using (var context = new SerialReaderContext())
-            {   
-                Work = context.BalanceWorks
-                                    .FirstOrDefault(w => w.Status == BalanceStatus.Reading
+            Work = _context.BalanceWorks
+                                    .FirstOrDefault(w => 
+                                                w.Balance == _balance                                                    
+                                                && w.Status == BalanceStatus.Reading
                                             && w.StartDate < DateTime.Now);
-                if (Work != null)
-                {
-                    DataCollection = Work.Datas.ToList();
-                    RefrescarDatos();
-                }
+            if (Work != null)
+            {
+                DataCollection = Work.Datas.ToList();
             }
+            else
+            {
+                DataCollection.Clear();
+            }
+
+            RefrescarDatos();
 
             var thread = new Thread(() => {
 
@@ -361,68 +340,43 @@ namespace SerialReader
                     if (pararLectura)
                     {
                         pararLectura = false;
-                        this.Invoke(new Action(() =>
-                        {
-                            btnIniciarLectura.Enabled = true;
-                            btnPararLectura.Enabled = false;
-                        }));
-                        break;
                     }
                     Thread.Sleep(500);
-                    using (var context = new SerialReaderContext())
+
+                    if (Work != null && Work.Status == BalanceStatus.Reading)
                     {
-                        if (Work != null && Work.Status == BalanceStatus.Reading)
-                        {
-                            var work = context.BalanceWorks
-                                                   .FirstOrDefault(w => w.WorkId == Work.WorkId);
+                        this.Invoke(new Action(() => {
+                            lblCurrentGuia.Text = Work.Code;
+                            toolStripStatusLabel1.Text = "Pesando...";
+                        }));
 
-                            if (work.Status == BalanceStatus.Finished)
-                            {
-                                Work = null;
-                                this.Invoke(new Action(() => {
-                                    toolStripStatusLabel1.Text = "Terminado";
-                                }));
-                            }
-                            else
-                            {
-                                this.Invoke(new Action(() => {
-                                    lblCurrentGuia.Text = Work.Code;
-                                    toolStripStatusLabel1.Text = "Pesando...";
-                                }));
-                                continue;
-                            }
-                        }
+                        continue;
+                    }
 
-                        Work = context.BalanceWorks
-                                            .FirstOrDefault(w => w.Status == BalanceStatus.Pending);
+                    try
+                    {
+                        Work = _context.BalanceWorks
+                                       .FirstOrDefault(w =>
+                                           w.Balance == _balance
+                                           && w.Status == BalanceStatus.Pending);
 
                         if (Work != null)
                         {
                             Work.Status = BalanceStatus.Reading;
-                            context.SaveChanges();
-                            DataCollection.Clear();
+                            _context.SaveChanges();
+                            
+                            DataCollection = Work.Datas.ToList();
                             RefrescarDatos();
                         }
+                    }
+                    catch (Exception ex)
+                    {
+
                     }
                 }
             })
             { IsBackground = true };
             thread.Start();
-        }
-
-        private void BtnIniciarLectura_Click(object sender, EventArgs e)
-        {
-            if (!pararLectura)
-            {
-                IniciarLectura();
-                btnIniciarLectura.Enabled = false;
-                btnPararLectura.Enabled = true;
-            }
-        }
-
-        private void BtnPararLectura_Click(object sender, EventArgs e)
-        {
-            pararLectura = true;
         }
 
         private void ParámetrosToolStripMenuItem_Click(object sender, EventArgs e)
@@ -449,19 +403,6 @@ namespace SerialReader
                 dgData.Refresh();
                 Application.DoEvents();
             }
-
-            
-
-            //using (var context = new SerialReaderContext())
-            //{
-            //    var data = context.BalanceDatas
-            //                    .Where(d => d.WorkId == workId)
-            //                    .OrderByDescending(d => d.CreatedDate)
-            //                    .ToList();
-
-
-            //}
-
         }
 
         private void ValidarConeccionBaseDeDatosToolStripMenuItem_Click(object sender, EventArgs e)
@@ -522,5 +463,7 @@ namespace SerialReader
             }
             
         }
+
+        
     }
 }
