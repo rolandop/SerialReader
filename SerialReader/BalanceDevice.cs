@@ -12,8 +12,6 @@ namespace SerialReader
     {
         SerialPort SerialPort1 { get; set; }
 
-        
-
         public void Connect()
         {
             SerialPort1 = new SerialPort

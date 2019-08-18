@@ -32,7 +32,11 @@ namespace SerialReader.DAL.Entities
         [ForeignKey("Work")]
         [Column("WORKID")]        
         public int WorkId { get; set; }
-        
+
+        [Column("REMARKS")]
+        [MaxLength(150)]
+        public string Remarks { get; set; }
+
         public virtual BalanceWork Work { get; set; }
     }
 }

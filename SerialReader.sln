@@ -5,6 +5,10 @@ VisualStudioVersion = 16.0.29009.5
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SerialReader", "SerialReader\SerialReader.csproj", "{F7295977-58CD-40C9-ACCE-2E7142FBEC1C}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SerialReader.Utilities", "SerialReader.Utilities\SerialReader.Utilities.csproj", "{8A67317E-D4F0-4B2C-8D18-F2F52C9967DC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SerialReader.Utilities.Test", "SerialReader.Utilities.Test\SerialReader.Utilities.Test.csproj", "{B5083E3F-D856-4656-91BA-6DB5A0B0FA79}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +19,14 @@ Global
 		{F7295977-58CD-40C9-ACCE-2E7142FBEC1C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F7295977-58CD-40C9-ACCE-2E7142FBEC1C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F7295977-58CD-40C9-ACCE-2E7142FBEC1C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8A67317E-D4F0-4B2C-8D18-F2F52C9967DC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8A67317E-D4F0-4B2C-8D18-F2F52C9967DC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8A67317E-D4F0-4B2C-8D18-F2F52C9967DC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8A67317E-D4F0-4B2C-8D18-F2F52C9967DC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B5083E3F-D856-4656-91BA-6DB5A0B0FA79}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B5083E3F-D856-4656-91BA-6DB5A0B0FA79}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B5083E3F-D856-4656-91BA-6DB5A0B0FA79}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B5083E3F-D856-4656-91BA-6DB5A0B0FA79}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

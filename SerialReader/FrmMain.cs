@@ -20,6 +20,8 @@ namespace SerialReader
         private string _balance;
         private SerialReaderContext _context;
         private IBalanceDevice _balanceDevice;
+        private bool _isEditing = false;
+
 
         public FrmMain()
         {
@@ -121,6 +123,14 @@ namespace SerialReader
 
         private void BtnCerrar_Click(object sender, EventArgs e)
         {
+            pararLectura = true;
+            btnAbrir.Enabled = true;
+            btnCerrar.Enabled = false;
+            desconectarToolStripMenuItem.Enabled = true;
+            lblCurrentGuia.Text = "";
+
+            Thread.Sleep(1000);
+
             if (Work != null)
             {
                 var work = _context
@@ -138,14 +148,7 @@ namespace SerialReader
                 _context.SaveChanges();
             }
 
-            pararLectura = true;
-            btnAbrir.Enabled = true;
-            btnCerrar.Enabled = false;
-            desconectarToolStripMenuItem.Enabled = true;
             toolStripStatusLabel1.Text = "Terminado";
-            lblCurrentGuia.Text = "";
-
-            Thread.Sleep(500);
 
             _context.Dispose();
 
@@ -204,9 +207,13 @@ namespace SerialReader
                 while (true)
                 {   
                     if (pararLectura)
-                    {
-                        pararLectura = false;
+                    {   
                         break;
+                    }
+
+                    if (_isEditing)
+                    {
+                        continue;
                     }
                     
                     var tipoImpresion = "IP";
@@ -339,7 +346,7 @@ namespace SerialReader
                 {
                     if (pararLectura)
                     {
-                        pararLectura = false;
+                        break;
                     }
                     Thread.Sleep(500);
 
@@ -355,6 +362,11 @@ namespace SerialReader
 
                     try
                     {
+                        if (pararLectura)
+                        {
+                            break;
+                        }
+
                         Work = _context.BalanceWorks
                                        .FirstOrDefault(w =>
                                            w.Balance == _balance
@@ -464,6 +476,38 @@ namespace SerialReader
             
         }
 
-        
+        private void DgData_CellBeginEdit(object sender, DataGridViewCellCancelEventArgs e)
+        {
+            _isEditing = true;
+        }
+
+        private void DgData_CellEndEdit(object sender, DataGridViewCellEventArgs e)
+        {
+            try
+            {
+                var lista = dgData.DataSource as List<BalanceData>;
+                var dataId = lista[e.RowIndex].DataId;
+
+                using (var contex = new SerialReaderContext())
+                {
+                    var data = contex.BalanceDatas
+                                    .FirstOrDefault(d => d.DataId == dataId);
+
+                    var value = dgData.Rows[e.RowIndex].Cells[e.ColumnIndex].Value;
+                    if (value != null)
+                    {
+                        data.Remarks = value.ToString();
+                        contex.SaveChanges();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "Editanto Notas", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            finally {
+                _isEditing = false;
+            }
+        }
     }
 }

@@ -51,9 +51,6 @@
             this.parámetrosToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.validarConeccionBaseDeDatosToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.dgData = new System.Windows.Forms.DataGridView();
-            this.CreatedDate = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.OriginalData = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Weight = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.label1 = new System.Windows.Forms.Label();
             this.lblCurrentGuia = new System.Windows.Forms.Label();
             this.btnConsultar = new System.Windows.Forms.Button();
@@ -61,6 +58,10 @@
             this.label3 = new System.Windows.Forms.Label();
             this.lblTotalPeso = new System.Windows.Forms.Label();
             this.lblBalanza = new System.Windows.Forms.Label();
+            this.CreatedDate = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.OriginalData = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Weight = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Remarks = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.gbLectura.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             this.menuStrip1.SuspendLayout();
@@ -130,7 +131,7 @@
             // 
             // btnEnviar
             // 
-            this.btnEnviar.Location = new System.Drawing.Point(600, 201);
+            this.btnEnviar.Location = new System.Drawing.Point(691, 201);
             this.btnEnviar.Margin = new System.Windows.Forms.Padding(4);
             this.btnEnviar.Name = "btnEnviar";
             this.btnEnviar.Size = new System.Drawing.Size(100, 28);
@@ -144,7 +145,7 @@
             this.gbLectura.Controls.Add(this.lblPeso);
             this.gbLectura.Location = new System.Drawing.Point(19, 72);
             this.gbLectura.Name = "gbLectura";
-            this.gbLectura.Size = new System.Drawing.Size(541, 171);
+            this.gbLectura.Size = new System.Drawing.Size(632, 171);
             this.gbLectura.TabIndex = 12;
             this.gbLectura.TabStop = false;
             // 
@@ -152,7 +153,7 @@
             // 
             this.lblPeso.Font = new System.Drawing.Font("Microsoft Sans Serif", 60F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblPeso.ForeColor = System.Drawing.SystemColors.HotTrack;
-            this.lblPeso.Location = new System.Drawing.Point(21, 18);
+            this.lblPeso.Location = new System.Drawing.Point(123, 29);
             this.lblPeso.Name = "lblPeso";
             this.lblPeso.Size = new System.Drawing.Size(501, 113);
             this.lblPeso.TabIndex = 13;
@@ -177,7 +178,7 @@
             this.toolStripStatusLabel1});
             this.statusStrip1.Location = new System.Drawing.Point(0, 617);
             this.statusStrip1.Name = "statusStrip1";
-            this.statusStrip1.Size = new System.Drawing.Size(580, 26);
+            this.statusStrip1.Size = new System.Drawing.Size(665, 26);
             this.statusStrip1.TabIndex = 15;
             this.statusStrip1.Text = "statusStrip1";
             // 
@@ -195,7 +196,7 @@
             this.toolStripMenuItem1});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Size = new System.Drawing.Size(580, 28);
+            this.menuStrip1.Size = new System.Drawing.Size(665, 28);
             this.menuStrip1.TabIndex = 16;
             this.menuStrip1.Text = "menuStrip1";
             // 
@@ -253,44 +254,17 @@
             this.dgData.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.CreatedDate,
             this.OriginalData,
-            this.Weight});
+            this.Weight,
+            this.Remarks});
             this.dgData.Location = new System.Drawing.Point(20, 288);
             this.dgData.Name = "dgData";
             this.dgData.RowHeadersVisible = false;
             this.dgData.RowHeadersWidth = 51;
             this.dgData.RowTemplate.Height = 24;
-            this.dgData.Size = new System.Drawing.Size(540, 259);
+            this.dgData.Size = new System.Drawing.Size(631, 259);
             this.dgData.TabIndex = 17;
-            // 
-            // CreatedDate
-            // 
-            this.CreatedDate.DataPropertyName = "CreatedDate";
-            this.CreatedDate.HeaderText = "Fecha lectura";
-            this.CreatedDate.MinimumWidth = 6;
-            this.CreatedDate.Name = "CreatedDate";
-            this.CreatedDate.ReadOnly = true;
-            this.CreatedDate.Width = 125;
-            // 
-            // OriginalData
-            // 
-            this.OriginalData.DataPropertyName = "OriginalData";
-            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
-            this.OriginalData.DefaultCellStyle = dataGridViewCellStyle1;
-            this.OriginalData.HeaderText = "Peso original";
-            this.OriginalData.MinimumWidth = 6;
-            this.OriginalData.Name = "OriginalData";
-            this.OriginalData.ReadOnly = true;
-            this.OriginalData.Width = 125;
-            // 
-            // Weight
-            // 
-            this.Weight.DataPropertyName = "Weight";
-            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
-            this.Weight.DefaultCellStyle = dataGridViewCellStyle2;
-            this.Weight.HeaderText = "Peso";
-            this.Weight.MinimumWidth = 6;
-            this.Weight.Name = "Weight";
-            this.Weight.Width = 125;
+            this.dgData.CellBeginEdit += new System.Windows.Forms.DataGridViewCellCancelEventHandler(this.DgData_CellBeginEdit);
+            this.dgData.CellEndEdit += new System.Windows.Forms.DataGridViewCellEventHandler(this.DgData_CellEndEdit);
             // 
             // label1
             // 
@@ -312,7 +286,7 @@
             // 
             // btnConsultar
             // 
-            this.btnConsultar.Location = new System.Drawing.Point(514, 253);
+            this.btnConsultar.Location = new System.Drawing.Point(598, 253);
             this.btnConsultar.Name = "btnConsultar";
             this.btnConsultar.Size = new System.Drawing.Size(46, 23);
             this.btnConsultar.TabIndex = 20;
@@ -332,7 +306,7 @@
             // lblTotalPeso
             // 
             this.lblTotalPeso.Font = new System.Drawing.Font("Microsoft Sans Serif", 20F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblTotalPeso.Location = new System.Drawing.Point(270, 561);
+            this.lblTotalPeso.Location = new System.Drawing.Point(359, 561);
             this.lblTotalPeso.Name = "lblTotalPeso";
             this.lblTotalPeso.Size = new System.Drawing.Size(290, 39);
             this.lblTotalPeso.TabIndex = 22;
@@ -342,17 +316,54 @@
             // lblBalanza
             // 
             this.lblBalanza.AutoSize = true;
-            this.lblBalanza.Location = new System.Drawing.Point(511, 40);
+            this.lblBalanza.Location = new System.Drawing.Point(605, 40);
             this.lblBalanza.Name = "lblBalanza";
             this.lblBalanza.Size = new System.Drawing.Size(46, 17);
             this.lblBalanza.TabIndex = 23;
             this.lblBalanza.Text = "label4";
             // 
+            // CreatedDate
+            // 
+            this.CreatedDate.DataPropertyName = "CreatedDate";
+            this.CreatedDate.HeaderText = "Fecha lectura";
+            this.CreatedDate.MinimumWidth = 6;
+            this.CreatedDate.Name = "CreatedDate";
+            this.CreatedDate.ReadOnly = true;
+            this.CreatedDate.Width = 120;
+            // 
+            // OriginalData
+            // 
+            this.OriginalData.DataPropertyName = "OriginalData";
+            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
+            this.OriginalData.DefaultCellStyle = dataGridViewCellStyle1;
+            this.OriginalData.HeaderText = "Peso original";
+            this.OriginalData.MinimumWidth = 6;
+            this.OriginalData.Name = "OriginalData";
+            this.OriginalData.ReadOnly = true;
+            // 
+            // Weight
+            // 
+            this.Weight.DataPropertyName = "Weight";
+            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
+            this.Weight.DefaultCellStyle = dataGridViewCellStyle2;
+            this.Weight.HeaderText = "Peso";
+            this.Weight.MinimumWidth = 6;
+            this.Weight.Name = "Weight";
+            this.Weight.ReadOnly = true;
+            // 
+            // Remarks
+            // 
+            this.Remarks.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            this.Remarks.DataPropertyName = "Remarks";
+            this.Remarks.HeaderText = "Notas";
+            this.Remarks.MinimumWidth = 6;
+            this.Remarks.Name = "Remarks";
+            // 
             // FrmMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(580, 643);
+            this.ClientSize = new System.Drawing.Size(665, 643);
             this.Controls.Add(this.lblBalanza);
             this.Controls.Add(this.lblTotalPeso);
             this.Controls.Add(this.label3);
@@ -413,14 +424,15 @@
         private System.Windows.Forms.ToolTip toolTip1;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Label lblTotalPeso;
-        private System.Windows.Forms.DataGridViewTextBoxColumn CreatedDate;
-        private System.Windows.Forms.DataGridViewTextBoxColumn OriginalData;
-        private System.Windows.Forms.DataGridViewTextBoxColumn Weight;
         private System.Windows.Forms.ToolStripMenuItem validarConeccionBaseDeDatosToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem conectarToolStripMenuItem;
         private System.Windows.Forms.Label lblBalanza;
         private System.Windows.Forms.ToolStripMenuItem conectarToolStripMenuItem1;
         private System.Windows.Forms.ToolStripMenuItem desconectarToolStripMenuItem;
+        private System.Windows.Forms.DataGridViewTextBoxColumn CreatedDate;
+        private System.Windows.Forms.DataGridViewTextBoxColumn OriginalData;
+        private System.Windows.Forms.DataGridViewTextBoxColumn Weight;
+        private System.Windows.Forms.DataGridViewTextBoxColumn Remarks;
     }
 }
 
