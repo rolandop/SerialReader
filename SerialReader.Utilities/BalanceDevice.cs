@@ -105,13 +105,68 @@ namespace SerialReader.Utilities
 
         public event BalanceDataRead OnReading;
 
+        private string _decimalPoint;
+        private string DecimalPoint
+        {
+            get {
+                if (_decimalPoint == null)
+                {
+                    if (System.Configuration.ConfigurationManager.AppSettings["NumberDecimalSeparator"] != null)
+                    {
+                        _decimalPoint = System.Configuration.ConfigurationManager.AppSettings["NumberDecimalSeparator"];
+                    }
+                    else
+                    {
+                        _decimalPoint = Thread.CurrentThread.CurrentCulture.NumberFormat.NumberDecimalSeparator;
+                    }
+                }
+                return _decimalPoint;
+            }
+        }
+
         protected float GetNumericWeight(string weight) {
+
             try
             {
-                //var factor = weight.StartsWith("-") ? -1 : 1;
-                var numericWeight = Convert.ToInt64(Regex.Match(weight, @"-?\d+").Value);
+           
+                string b = string.Empty;
+                float val = 0;
 
-                return numericWeight;
+                for (int i = 0; i < weight.Length; i++)
+                {
+                    var c = weight[i];
+
+                    if (c == '-')
+                        b += c;
+                    else if (char.IsDigit(c))
+                        b += c;
+                    else if (c.ToString() == DecimalPoint)
+                        b += c;
+                }
+
+                if (b.Length > 0)
+                {
+                    if (Thread.CurrentThread.CurrentCulture.NumberFormat.NumberDecimalSeparator != DecimalPoint)
+                    {
+                        b = b.Replace(DecimalPoint, Thread.CurrentThread.CurrentCulture.NumberFormat.NumberDecimalSeparator);
+                    }
+
+                    val = float.Parse(b);
+                }
+
+                return val;
+
+
+
+                //var expresion = @"^-?\\d*(\\.\\d+)?$";
+                ////var expresion = @"-?\d+";
+
+                //var reg = Regex.Match(weight, expresion).Value;
+
+                ////var factor = weight.StartsWith("-") ? -1 : 1;
+                //var numericWeight = Convert.ToInt64(reg);
+
+                //return numericWeight;
             }
             catch (Exception)
             {
