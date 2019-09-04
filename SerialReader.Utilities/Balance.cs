@@ -17,7 +17,6 @@ namespace SerialReader.Utilities
             var portName = ConfigurationManager.AppSettings["PortName"];
             Connect(portName);
         }
-
         public override void Connect(string portName)
         {
             var config = new BalanceConfig();
@@ -104,7 +103,6 @@ namespace SerialReader.Utilities
                 
             }
         }
-
         public override void Disconnect()
         {
             if (SerialPort1?.IsOpen?? false)
@@ -112,7 +110,6 @@ namespace SerialReader.Utilities
                 SerialPort1.Close();
             }
         }
-
         public override string SendAndRead(string command)
         {
             try
@@ -136,13 +133,11 @@ namespace SerialReader.Utilities
             catch { }
             return "";
         }
-
         public override void Send(string command)
         {
             byte[] buffer = Encoding.ASCII.GetBytes($"{command}\r\n");
             SerialPort1.Write(buffer, 0, buffer.Length);
         }
-
         public override string Read()
         {
             try
@@ -165,7 +160,6 @@ namespace SerialReader.Utilities
             catch { }
             return "";
         }
-
         private  void SerialPort1_PinChanged(object sender, SerialPinChangedEventArgs e)
         {
             switch (e.EventType)
@@ -182,17 +176,14 @@ namespace SerialReader.Utilities
                     break;
             }
         }
-
         private void SerialPort1_ErrorReceived(object sender, SerialErrorReceivedEventArgs e)
         {
 
         }
-
         public override float SendAndReadNumeric(string command)
         {
             return GetNumericWeight(SendAndRead(command));
         }
-
         public override float ReadNumeric()
         {
             return GetNumericWeight(Read());

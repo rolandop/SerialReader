@@ -20,7 +20,7 @@ namespace SerialReader.Utilities.Test
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            
+            Button1_Click(null, null);
         }
 
         private void Device_OnReading(string weight, BalanceReadStatus status)
@@ -41,7 +41,7 @@ namespace SerialReader.Utilities.Test
             {
                 Device = new Balance();
             }
-
+            
             Device.OnReading += Device_OnReading;
             Device.ReadMode = checkBox2.Checked ? BalanceReadMode.OnDemand
                                  : BalanceReadMode.Automatic;
@@ -51,7 +51,8 @@ namespace SerialReader.Utilities.Test
 
         private void Button2_Click(object sender, EventArgs e)
         {
-            MessageBox.Show(Device.ReadNumeric().ToString());
+            Device.ReadNumeric();
+           // MessageBox.Show(Device.ReadNumeric().ToString());
         }
     }
 }
